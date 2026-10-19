@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import subprocess
 import sys
 import threading
 import termios
@@ -17,6 +18,7 @@ R/F: + / - all joints (coarse)
 O:   Open gripper
 C:   Close gripper
 X:   Reset robot to vertical (all-zero) position
+B:   Reset box to initial pose
 ESC: Quit
 """
 
@@ -27,6 +29,9 @@ GRIPPER_OPEN = -0.5236  # -30 deg
 GRIPPER_CLOSE = 0.1745  # 10 deg
 ARM_STEP = 0.05
 COARSE_STEP = 0.2
+BOX_NAME = 'wood_cube_5cm'
+BOX_INIT_POSITION = (0.0, -0.1, 1.015)
+BOX_INIT_QUATERNION = (0.0, 0.0, 0.0, 1.0)  # x, y, z, w
 
 class KeyboardInput:
     def __enter__(self):
@@ -85,10 +90,44 @@ class TeleopNode(Node):
                         self.arm_pos = ARM_INIT[:]
                         self.gripper_pos = GRIPPER_OPEN
                         print("[INFO] Robot reset to vertical (all-zero) position.")
+                    elif key.lower() == 'b':
+                        self.reset_box_pose()
                     elif ord(key) == 27:  # ESC
                         self.running = False
                         rclpy.shutdown()
                         break
+
+    def reset_box_pose(self):
+        x, y, z = BOX_INIT_POSITION
+        qx, qy, qz, qw = BOX_INIT_QUATERNION
+        request = (
+            f'name: "{BOX_NAME}", '
+            f'position: {{x: {x}, y: {y}, z: {z}}}, '
+            f'orientation: {{x: {qx}, y: {qy}, z: {qz}, w: {qw}}}'
+        )
+        try:
+            result = subprocess.run(
+                [
+                    'ign', 'service',
+                    '-s', '/world/default/set_pose',
+                    '--reqtype', 'ignition.msgs.Pose',
+                    '--reptype', 'ignition.msgs.Boolean',
+                    '--timeout', '3000',
+                    '--req', request,
+                ],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+        except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+            print(f"[ERROR] Failed to reset box: {e}")
+            return
+        # ign service may exit 0 even on timeout, so check the reply itself
+        if 'data: true' in result.stdout:
+            print("[INFO] Box reset to initial pose.")
+        else:
+            output = (result.stdout + result.stderr).strip()
+            print(f"[ERROR] Failed to reset box: {output or 'no response'}")
 
     def publish_commands(self):
         # Arm
