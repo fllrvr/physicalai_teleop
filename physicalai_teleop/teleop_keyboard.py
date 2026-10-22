@@ -29,8 +29,8 @@ GRIPPER_OPEN = -0.5236  # -30 deg
 GRIPPER_CLOSE = 0.1745  # 10 deg
 ARM_STEP = 0.05
 COARSE_STEP = 0.2
-BOX_NAME = 'wood_cube_5cm'
-BOX_INIT_POSITION = (0.0, -0.1, 1.015)
+BOX_NAME = 'aruco_cube_0'
+BOX_INIT_POSITION = (0.0, -0.1, 1.04)
 BOX_INIT_QUATERNION = (0.0, 0.0, 0.0, 1.0)  # x, y, z, w
 
 class KeyboardInput:
