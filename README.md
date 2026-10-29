@@ -55,6 +55,7 @@ ros2 run physicalai_teleop teleop_keyboard
 | O | Open gripper |
 | C | Close gripper |
 | X | Reset robot to vertical (all-zero) position |
+| B | Reset box to initial pose |
 | ESC | Quit |
 
 The joints are:
