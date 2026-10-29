@@ -8,7 +8,8 @@ A ROS2 package for teleoperating CRANE+ V2 robot.
 ## Installation
 1. Setup Environment
 
-Follow https://github.com/AI-Robot-Book-Humble/docker-ros2-desktop-ai-robot-book-humble to setup the Docker environment
+Follow https://github.com/AI-Robot-Book-Humble/docker-ros2-desktop-ai-robot-book-humble to setup the Docker environment.
+Then build the upstream [rt-net/crane_plus](https://github.com/rt-net/crane_plus) in your workspace (the box reset with the B key uses `aruco_cube_0` in its world).
 Launch CRANE+ V2 manipulator in Gazebo by running
 ```bash
 ros2 launch crane_plus_gazebo crane_plus_with_table.launch.py
@@ -18,7 +19,7 @@ ros2 launch crane_plus_gazebo crane_plus_with_table.launch.py
 
 ```bash
 cd ~/pai_ws/src
-git clone https://github.com/matsuolab/physicalai_teleop.git
+git clone https://github.com/fllrvr/physicalai_teleop.git
 ```
 
 3. Install dependencies
